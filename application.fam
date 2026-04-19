@@ -1,0 +1,11 @@
+App(
+    appid="flipper_zero_pinball",
+    name="Pinball",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="flipper_zero_pinball_app",
+    stack_size=2 * 1024,
+    fap_category="Games",
+    fap_description="A simple pinball game for Flipper Zero",
+    fap_author="frnkptrln",
+    fap_version="1.0",
+)

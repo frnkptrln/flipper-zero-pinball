@@ -4,6 +4,8 @@
 #include <input/input.h>
 #include <notification/notification_messages.h>
 
+#include "pinball_physics.h"
+
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,7 +15,6 @@
  * ────────────────────────────────────────────── */
 
 #define SCREEN_W 64
-#define SCREEN_H 128
 
 /* Playing field boundaries */
 #define FIELD_LEFT   1
@@ -46,9 +47,6 @@
 
 /* Bumpers */
 #define NUM_BUMPERS 2
-
-/* Tick rate */
-#define TICK_INTERVAL_MS 33  /* ~30 FPS */
 
 /* Sound durations */
 #define SND_BUMPER_MS   50
@@ -177,13 +175,8 @@ static void flipper_get_endpoint(
     const PinballFlipper* f,
     float* ex,
     float* ey) {
-    if(f->is_left) {
-        *ex = f->pivot_x + FLIPPER_LEN * cosf(f->angle);
-        *ey = f->pivot_y + FLIPPER_LEN * sinf(f->angle);
-    } else {
-        *ex = f->pivot_x + FLIPPER_LEN * cosf(f->angle);
-        *ey = f->pivot_y + FLIPPER_LEN * sinf(f->angle);
-    }
+    *ex = f->pivot_x + FLIPPER_LEN * cosf(f->angle);
+    *ey = f->pivot_y + FLIPPER_LEN * sinf(f->angle);
 }
 
 static void flipper_update(PinballFlipper* f) {
@@ -260,19 +253,21 @@ static void update_physics(PinballGame* game) {
     float top_wall = (float)FIELD_TOP + BALL_RADIUS;
 
     if(game->ball_in_lane) {
-        /* Ball is in the launch lane */
-        right_wall = (float)LANE_RIGHT - BALL_RADIUS;
-        float lane_left = (float)LANE_LEFT + BALL_RADIUS;
-
-        if(b->x < lane_left) {
-            /* Ball exited the lane to the left → now in the field */
+        /* Route a sufficiently strong launch through the opening at the top. */
+        if(pinball_route_launcher(
+               &b->x,
+               &b->y,
+               &b->vx,
+               &b->vy,
+               top_wall,
+               (float)LANE_LEFT,
+               (float)FIELD_RIGHT,
+               (float)BALL_RADIUS,
+               WALL_DAMPING)) {
             game->ball_in_lane = false;
+            right_wall = (float)FIELD_RIGHT - BALL_RADIUS;
         } else {
-            /* Bounce within lane walls */
-            if(b->x < lane_left) {
-                b->x = lane_left;
-                b->vx = fabsf(b->vx) * WALL_DAMPING;
-            }
+            right_wall = (float)LANE_RIGHT - BALL_RADIUS;
         }
     } else {
         right_wall = (float)FIELD_RIGHT - BALL_RADIUS;
@@ -289,7 +284,7 @@ static void update_physics(PinballGame* game) {
         b->vx = -fabsf(b->vx) * WALL_DAMPING;
     }
     /* Wall collisions – top */
-    if(b->y < top_wall) {
+    if(!game->ball_in_lane && b->y < top_wall) {
         b->y = top_wall;
         b->vy = fabsf(b->vy) * WALL_DAMPING;
     }
@@ -433,7 +428,7 @@ static void render_callback(Canvas* canvas, void* ctx) {
         canvas_draw_frame(canvas, 0, 10, FIELD_RIGHT + 1, FIELD_BOTTOM - 9);
 
         /* Lane separator */
-        canvas_draw_line(canvas, LANE_LEFT, FIELD_TOP, LANE_LEFT, FIELD_BOTTOM);
+        canvas_draw_line(canvas, LANE_LEFT, FIELD_TOP + 12, LANE_LEFT, FIELD_BOTTOM);
 
         /* ── Bumpers ── */
         for(int i = 0; i < NUM_BUMPERS; i++) {

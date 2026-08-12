@@ -2,6 +2,11 @@
 
 A simple pinball game for the **Flipper Zero** — designed for the 128×64 monochrome display in **portrait orientation** (hold the Flipper sideways!).
 
+> **Status: build-verified prototype.** GitHub Actions compiles the `.fap`
+> against the latest official release SDK and runs the portable launcher
+> physics tests. Physical-device feel, audio timing, and long-session behavior
+> still require validation on a real Flipper Zero.
+
 ## 🎯 What It Does
 
 This app turns your Flipper Zero into a pocket-sized pinball table. By holding the device sideways, the screen perfectly emulates the tall, narrow aspect ratio of a real pinball machine. 
@@ -40,6 +45,10 @@ This app turns your Flipper Zero into a pocket-sized pinball table. By holding t
 - **Sound effects** via the built-in speaker (bumper hits, flipper snaps, drain)
 - **Simple collision physics** (gravity, wall bouncing, bumper impulse)
 
+The launcher uses a tested top-lane transfer: a sufficiently charged ball exits
+the narrow launcher into the main field instead of bouncing forever inside the
+lane.
+
 ## 🎮 How to Play
 
 Hold your Flipper Zero **sideways** (rotated 90°) so the D-pad is below or above the screen, depending on your preference.
@@ -73,6 +82,18 @@ ufbt
 ```
 
 The compiled `.fap` will be in the `dist/` directory.
+
+Every pull request also builds a downloadable `.fap` artifact using the
+[official uFBT action](https://github.com/flipperdevices/flipperzero-ufbt-action).
+
+### Portable physics test
+
+The launcher transition is deliberately independent of the Flipper SDK:
+
+```bash
+cc -std=c11 -Wall -Wextra -Werror tests/physics_test.c pinball_physics.c -lm -o /tmp/pinball-physics-test
+/tmp/pinball-physics-test
+```
 
 ### Deploy directly to Flipper
 ```bash

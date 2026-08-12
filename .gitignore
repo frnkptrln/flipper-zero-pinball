@@ -22,3 +22,10 @@ Thumbs.db
 *~
 .idea/
 .vscode/
+
+# uFBT and local build output
+.ufbt/
+dist/
+build/
+*.o
+/physics-test

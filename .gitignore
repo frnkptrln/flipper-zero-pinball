@@ -29,3 +29,6 @@ dist/
 build/
 *.o
 /physics-test
+.venv/
+__pycache__/
+*.pyc

@@ -3,6 +3,54 @@
 A pocket pinball game for the Flipper Zero's **64 × 128 portrait display**.
 Version **0.3.0** rebuilds the game around a portable physics engine and renderer.
 
+## Play in a browser
+
+The new [`web/`](web/) preview runs those same C sources as WebAssembly. It has
+touch controls, simultaneous flippers, keyboard input, optional synthetic sound,
+pause on focus loss and per-table local best scores. No installation, accounts
+or external services are needed by the game:
+
+```bash
+python3 -m http.server 8765 --directory web
+```
+
+Open `http://localhost:8765`. Choose a table with Left/Right, press Play to read
+the rules, then Start. Hold Space to charge and release to launch; use A/D or
+the arrow keys for the flippers. Space nudges a moving ball, P/Esc pauses.
+Touch users hold the three buttons below the display; two fingers can hold both
+flippers. Losing focus cancels a held launcher instead of firing it on resume.
+
+The checked-in WASM needs no runtime imports and is rebuilt from the shared
+physics/renderer with a pinned compiler:
+
+```bash
+python3 -m pip install ziglang==0.15.2
+python3 scripts/build_web.py --check
+node --test tests/web.test.mjs
+```
+
+Omit `--check` after editing the C sources to regenerate `web/pinball.wasm` and
+its source-hash manifest. CI verifies the committed binary, compares native and
+WASM trajectories on both tables, and uploads the complete static `web/` folder.
+This is a browser preview, not device validation: physical button ergonomics,
+Flipper speaker/vibration and SD-card persistence still require hardware.
+
+![The browser table at desktop size](docs/browser-preview.png)
+
+Browser interaction checks use Playwright:
+
+```bash
+npm ci
+npx playwright install chromium
+npm run test:browser
+```
+
+They exercise keyboard launch, two simultaneous touch contacts, cancellation,
+pause, sound toggling and denied storage. Desktop and mobile Chromium viewports
+have been checked; physical touch devices, Safari and Firefox remain unverified.
+
+## Flipper version
+
 ![Screens rendered by the game](docs/screens.png)
 
 **Status:** compiled with uFBT 0.2.6 and official firmware SDK 1.4.3, target f7,

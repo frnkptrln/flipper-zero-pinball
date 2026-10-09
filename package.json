@@ -1,0 +1,9 @@
+{
+  "name": "pinball-zero-browser-checks",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/web.test.mjs",
+    "test:browser": "node tests/browser-smoke.cjs"
+  },
+  "devDependencies": {"playwright": "1.62.1"}
+}

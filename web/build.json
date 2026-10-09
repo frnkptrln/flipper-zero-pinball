@@ -1,0 +1,14 @@
+{
+  "compiler": "zig 0.15.2",
+  "target": "wasm32-wasi reactor",
+  "optimization": "O2; stripped",
+  "wasm_sha256": "a4e4ab7d129f72d0cf22814c8f4bff545a4b8e9b3406cf708f3f6443b6be2a3d",
+  "sources": {
+    "web/bridge.c": "1471aadc87c3ed7649f7e845ff915660226bef5e001e3e406804580ff8c6bdfd",
+    "pinball_physics.c": "350fb8d938f715365c2149849b39a1773c2ec9fbe9073484d38bf1a7ad93fb2e",
+    "pinball_render.c": "845ec6f74d43d01b7939eff8a4ab3cf3f812243f9b354dfefc66101d06183127",
+    "pinball_physics.h": "cbb817d795cfb8afdd93b94e64955d5235da1d1f3b0875cc11c032e6aa60dcdb",
+    "pinball_render.h": "e4a9fb46ad0acbb047670ca8480f346d0cfb85db6d65cf439cb9c9555c08cd76",
+    "pixel_ui.h": "45da57b889e1f42ccbb08843efb1119b91affaf32b9caeb4d44c62779e25f7f2"
+  }
+}

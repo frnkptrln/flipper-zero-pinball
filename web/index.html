@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111515">
+  <title>Pinball Zero — browser table</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <a class="wordmark" href="https://github.com/frnkptrln/flipper-zero-pinball">PINBALL<span>ZERO</span></a>
+      <p>Two tables. Three lives.<br>A very small universe.</p>
+    </header>
+    <section class="cabinet" aria-label="Pinball game">
+      <div class="rail"><span id="table-name">ORBIT</span><button id="sound" type="button" aria-pressed="false" disabled>Sound off</button></div>
+      <div class="screen-surround">
+        <canvas id="screen" width="64" height="128" tabindex="0" aria-label="64 by 128 pixel pinball display"></canvas>
+        <div class="screen-label"><span>64 × 128</span><span>120 HZ CORE</span></div>
+      </div>
+      <div class="meter" aria-label="Current game"><span>Score <b id="score">0</b></span><span>Best <b id="best">0</b></span><span>Lives <b id="lives">3</b></span></div>
+      <p id="status" role="status">Loading the table…</p>
+      <div class="controls" role="group" aria-label="Hold controls">
+        <button data-control="1" type="button" disabled><span aria-hidden="true">◀</span><small>LEFT</small></button>
+        <button data-control="4" class="launcher" type="button" disabled><span id="launch-label">PLAY</span><small>HOLD / RELEASE</small></button>
+        <button data-control="2" type="button" disabled><span aria-hidden="true">▶</span><small>RIGHT</small></button>
+      </div>
+      <div class="actions">
+        <button id="action" type="button" disabled>Choose table</button>
+        <button id="menu" type="button" hidden>Return to menu</button>
+      </div>
+    </section>
+    <aside>
+      <p class="eyebrow">THE POCKET TABLE, OPENED UP</p>
+      <h1>One more ball.</h1>
+      <p>Light A, B and C to start multiball. Keep the bumper combo alive. Choose your moment to nudge — three quick pushes tilt the table.</p>
+      <dl class="keys"><dt>← / A &nbsp; → / D</dt><dd>Hold the flippers</dd><dt>Space</dt><dd>Hold to charge, release to launch.<br>While playing: nudge.</dd><dt>Enter &nbsp; P / Esc</dt><dd>Start / continue &nbsp; · &nbsp; Pause</dd></dl>
+      <p class="fine">Touch: hold the buttons below the screen. Two fingers can hold both flippers. Switching tabs pauses your game.</p>
+      <p class="fine">The original C physics and pixel renderer run locally as WebAssembly. Scores stay in this browser. This preview does not reproduce the Flipper's buttons, speaker or SD card.</p>
+      <p id="storage-note" class="fine" hidden>Browser storage is unavailable. Best scores last only until this page closes.</p>
+      <a class="source" href="https://github.com/frnkptrln/flipper-zero-pinball">Source &amp; Flipper build ↗</a>
+    </aside>
+    <noscript>This game needs JavaScript and WebAssembly. Its source and device build are available at the link above.</noscript>
+  </main>
+</body>
+</html>

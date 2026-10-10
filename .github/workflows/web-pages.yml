@@ -41,7 +41,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.build_type' 2>/dev/null | grep -q workflow; then
+          # gh prints the 404 body to stdout when Pages is not enabled; only a successful call counts
+          if kind=$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.build_type' 2>/dev/null) && [ "$kind" = "workflow" ]; then
             echo "enabled=true" >> "$GITHUB_OUTPUT"
           else
             echo "enabled=false" >> "$GITHUB_OUTPUT"

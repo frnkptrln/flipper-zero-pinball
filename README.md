@@ -14,6 +14,10 @@ or external services are needed by the game:
 python3 -m http.server 8765 --directory web
 ```
 
+The `Browser table on Pages` workflow publishes the same folder with GitHub
+Pages once Pages is enabled for the repository (source: GitHub Actions); the
+table is then at `https://frnkptrln.github.io/flipper-zero-pinball/`.
+
 Open `http://localhost:8765`. Choose a table with Left/Right, press Play to read
 the rules, then Start. Hold Space to charge and release to launch; use A/D or
 the arrow keys for the flippers. Space nudges a moving ball, P/Esc pauses.

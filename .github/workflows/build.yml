@@ -12,7 +12,9 @@ jobs:
   host-physics:
     runs-on: ubuntu-24.04  # the image these checks were verified on; ubuntu-latest becomes 26.04 from 19 Oct 2026
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Compile and run portable physics tests
         run: |
           cc -std=c11 -Wall -Wextra -Werror tests/physics_test.c pinball_physics.c -lm -o /tmp/pinball-physics-test
@@ -21,14 +23,16 @@ jobs:
   build-fap:
     runs-on: ubuntu-24.04  # the image these checks were verified on; ubuntu-latest becomes 26.04 from 19 Oct 2026
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Build against the latest release SDK
-        uses: flipperdevices/flipperzero-ufbt-action@v0.1
+        uses: flipperdevices/flipperzero-ufbt-action@e7cd34914e61ddc056acd8daaab96d8b4d4d9f55 # v0.1.4
         id: build
         with:
           sdk-channel: release
       - name: Upload FAP artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: flipper-zero-pinball-${{ steps.build.outputs.suffix }}
           path: ${{ steps.build.outputs.fap-artifacts }}

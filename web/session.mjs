@@ -1,5 +1,5 @@
 export const LEFT = 1, RIGHT = 2, LAUNCH = 4;
-const SAVE_KEY = 'pinball-zero-web-v1';
+export const SAVE_KEY = 'pinball-zero-web-v1';
 
 export function readBest(storage) {
   try {
@@ -81,7 +81,14 @@ export class PinballSession {
     this.saveBest(); this.cancel(); this.state = 'menu'; this.core.pb_init(this.table);
   }
 
+  refreshBest() {
+    const stored = readBest(this.storage);
+    this.best = this.best.map((score, table) => Math.max(score, stored[table]));
+  }
+
   saveBest() {
+    // Another tab may have saved a higher score since this session opened.
+    this.refreshBest();
     this.best[this.table] = Math.max(this.best[this.table], this.core.pb_score());
     try { this.storage.setItem(SAVE_KEY, JSON.stringify(this.best)); }
     catch { this.storageAvailable = false; }

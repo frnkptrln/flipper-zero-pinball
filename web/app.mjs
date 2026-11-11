@@ -1,4 +1,4 @@
-import {PinballSession, LEFT, RIGHT, LAUNCH} from './session.mjs';
+import {PinballSession, LEFT, RIGHT, LAUNCH, SAVE_KEY} from './session.mjs';
 
 const $ = id => document.getElementById(id);
 const buttons = [...document.querySelectorAll('[data-control]')];
@@ -120,6 +120,11 @@ async function start() {
   });
   document.addEventListener('keyup', event => { if (keys[event.code]) { session.release(`key:${event.code}`); update(); } });
   window.addEventListener('blur', interrupted);
+  window.addEventListener('pagehide', interrupted);
+  window.addEventListener('storage', event => {
+    if (event.storageArea !== storage || (event.key !== SAVE_KEY && event.key !== null)) return;
+    session.refreshBest(); update();
+  });
   document.addEventListener('visibilitychange', () => { if (document.hidden) interrupted(); });
   $('action').disabled = false;
   $('action').onclick = () => {

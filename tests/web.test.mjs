@@ -78,3 +78,25 @@ test('background-sized elapsed time stays bounded and pixels expose exactly one 
   assert.equal(a.core.pb_ball_y(0),b.core.pb_ball_y(0));assert.equal(a.pixels().length,1024);
   assert.ok(a.pixels().some(n=>n>0));
 });
+
+test('a stale session preserves newer bests for both tables before writing', () => {
+  let saved = '[12,34]';
+  const store = {getItem: () => saved, setItem: (_, value) => { saved = value; }};
+  const older = session(store);
+  saved = '[123,456]'; // A second window has completed two better games.
+  older.pause();
+  assert.deepEqual(JSON.parse(saved), [123,456]);
+  older.menu(); older.select(1); older.enter(); older.enter(); older.pause();
+  assert.deepEqual(JSON.parse(saved), [123,456]);
+});
+
+test('refreshing bests never lowers an in-memory best or writes to storage', () => {
+  let saved = '[12,34]', writes = 0;
+  const s = session({getItem: () => saved, setItem: () => { writes++; }});
+  for (const value of ['[6,99]', 'broken', 'null', '[0,0]']) {
+    saved = value; s.refreshBest();
+    assert.deepEqual(s.best, [12,99]);
+  }
+  assert.equal(writes, 0);
+  assert.equal(s.state, 'playing');
+});

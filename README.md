@@ -23,6 +23,10 @@ the rules, then Start. Hold Space to charge and release to launch; use A/D or
 the arrow keys for the flippers. Space nudges a moving ball, P/Esc pauses.
 Touch users hold the three buttons below the display; two fingers can hold both
 flippers. Losing focus cancels a held launcher instead of firing it on resume.
+Leaving the page also pauses and cancels a held launcher, including when the
+browser keeps the page in its back/forward cache. Best scores refresh from other
+tabs on the same origin, and saving preserves higher scores already in storage.
+This is browser-local persistence; clearing browser data still removes the save.
 
 The checked-in WASM needs no runtime imports and is rebuilt from the shared
 physics/renderer with a pinned compiler:

@@ -45,6 +45,20 @@ const state = page => page.evaluate(async()=>{const {session:s}=await import('./
     assert.equal((await state(page)).state,'paused');
     await page.locator('#sound').click();assert.equal(await page.locator('#sound').getAttribute('aria-pressed'),'true');
     await page.locator('#sound').click();assert.equal(await page.locator('#sound').getAttribute('aria-pressed'),'false');
+    const peer=await open(desktop);
+    await peer.evaluate(()=>localStorage.setItem('pinball-zero-web-v1','[1234,5678]'));
+    await page.waitForFunction(()=>document.getElementById('best').textContent==='5678');
+    await page.evaluate(async()=>{const {session:s}=await import('./app.mjs');s.saveBest();});
+    assert.deepEqual(await peer.evaluate(()=>JSON.parse(localStorage.getItem('pinball-zero-web-v1'))),[1234,5678]);
+    // A pagehide can arrive without blur (navigation / back-forward cache).
+    await start(peer);
+    await peer.keyboard.down('Space');
+    await peer.waitForFunction(async()=>{const {session:s}=await import('./app.mjs');return s.core.pb_charge()>.1;});
+    await peer.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+    assert.equal((await state(peer)).state,'paused');assert.equal((await state(peer)).charge,0);
+    assert.equal((await state(peer)).phase,0);
+    await peer.keyboard.up('Space');
+    await peer.locator('#action').click();assert.equal((await state(peer)).phase,0);
     await desktop.close();
 
     const mobile=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1});
@@ -71,6 +85,6 @@ const state = page => page.evaluate(async()=>{const {session:s}=await import('./
     await denied.keyboard.press('Space');assert.equal((await state(denied)).phase,1);
     await blocked.close();
     assert.deepEqual(errors,[]);
-    console.log(JSON.stringify({browser:browser.version(),checks:['desktop keyboard and launch','both flippers','pause freeze','blur pause','audio toggle','mobile viewport','simultaneous touch','cancelled charge','denied storage','no page errors'],screenshots:output},null,2));
+    console.log(JSON.stringify({browser:browser.version(),checks:['desktop keyboard and launch','both flippers','pause freeze','blur pause','audio toggle','shared best scores','pagehide cancels charge','mobile viewport','simultaneous touch','cancelled charge','denied storage','no page errors'],screenshots:output},null,2));
   } finally {await browser.close();}
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>server.close());
